@@ -1,0 +1,74 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.leebli.parsers</groupId>
+	<artifactId>archive-parser</artifactId>
+
+	<parent>
+		<groupId>org.leebli</groupId>
+		<artifactId>parsers</artifactId>
+		<version>0.1-SNAPSHOT</version>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.bcel</groupId>
+			<artifactId>bcel</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.github.nscala-time</groupId>
+			<artifactId>nscala-time_2.11</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.clapper</groupId>
+			<artifactId>grizzled-slf4j_2.11</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.leebli.models</groupId>
+			<artifactId>java-archive-model</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>org.leebli.parsers</groupId>
+			<artifactId>parser-jar-testproject</artifactId>
+			<version>1.0</version>
+			<scope>test</scope>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>org.leebli.parsers</groupId>
+			<artifactId>parser-war-testproject</artifactId>
+			<version>1.0</version>
+			<type>war</type>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+	
+	</dependencies>
+		
+	<build>
+		<sourceDirectory>src/main/scala</sourceDirectory>
+		<testSourceDirectory>src/test/scala</testSourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>
