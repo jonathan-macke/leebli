@@ -18,5 +18,13 @@ case class WarFile(
 
   def isInvalid() = !valid
 
+  def nbOfJarFiles() = jarFiles.size
+  
+  def nbOfEjbModules() = jarFiles.filter(_.ejbModule).size
+  
+  def allClasses() = jarFiles flatMap (_.classes)
+  
+  def allPackages() = allClasses map (_.packageName.get) distinct
+  
   override def toString() = if (mavenInfo.isDefined) mavenInfo.toString else name
 }

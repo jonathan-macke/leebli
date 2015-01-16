@@ -2,31 +2,22 @@ package org.leebli.parser.jar
 
 import org.apache.commons.compress.archivers.ArchiveInputStream
 import org.apache.commons.compress.archivers.ArchiveStreamFactory
-
 import java.io.BufferedInputStream
 import java.io.InputStream
-
 import org.leebli.parser.util.ZipInputStreamIterator._
 import com.github.nscala_time.time.Imports._
-
 import java.util.Properties
-
 import grizzled.slf4j.Logger
-
 import org.leebli.model.jar.JavaClass
 import org.leebli.model.jar.JarFile
-
 import scala.collection.mutable.MutableList
-
 import org.leebli.model.MavenInfo
-
 import org.apache.bcel.classfile.ClassParser
-
 import org.leebli.parser.util._
-
 import org.apache.bcel.classfile.DescendingVisitor
-import org.leebli.parser.util.Configuration;
+import org.leebli.parser.util.Configuration
 import org.leebli.parser.util.RegexUtil;
+import org.leebli.model.jar.Annotation
 
 object JarParser {
 
@@ -42,6 +33,8 @@ object JarParser {
     def isManifest(f: String): Boolean = f.endsWith("META-INF/MANIFEST.MF")
 
     def isPom(f: String): Boolean = f.contains("META-INF/maven") && f.endsWith("pom.properties")
+    
+    def isEjbModule(f:String) : Boolean = f.contains("META-INF/ejb-jar.xml")
 
     val archiveStream: Either[ArchiveInputStream, String] = {
       try {
@@ -53,6 +46,7 @@ object JarParser {
     }
 
     var mavenInfo: Option[MavenInfo] = None
+    var isEJbModule = false
     val javaClasses = MutableList[JavaClass]()
 
     if (archiveStream.isLeft) {
@@ -67,12 +61,18 @@ object JarParser {
           if (parseJavaClass) {
             val classParser = new ClassParser(zin, name);
             val javaClass = classParser.parse();
-
+                       
             val pVisitor = new PackageVisitor(javaClass);
             val dVisitor = new DescendingVisitor(javaClass, pVisitor);
             javaClass.accept(dVisitor);
             val imports = pVisitor.getImports(Configuration.ignorePackages.toList);
-
+            
+            val annotations = for {
+              annots <- javaClass.getAnnotationEntries.toList
+              val annotationType = annots.getAnnotationType
+            } yield Annotation (annotationType) 
+              
+            
             javaClasses += JavaClass(
               packageName = Some(javaClass.getPackageName),
               name = javaClass.getClassName,
@@ -80,7 +80,8 @@ object JarParser {
               isAbstract = javaClass.isAbstract,
               isPublic = javaClass.isPublic,
               isInterface = javaClass.isInterface,
-              importedPackages = imports)
+              importedPackages = imports,
+              annotations = annotations)
 
           } else {
             javaClasses += JavaClass(name = n, size = Some(s))
@@ -91,8 +92,8 @@ object JarParser {
           properties.load(zin)
           mavenInfo = Some(MavenInfo(
             properties.getProperty("groupId"), properties.getProperty("artifactId"), properties.getProperty("version")))
-        } else {
-
+        } else if (isEjbModule(n)) {
+            isEJbModule = true
         }
       }
     }
@@ -118,6 +119,7 @@ object JarParser {
       classes = javaClasses.toList,
       mavenInfo = mavenInfo,
       name = name,
+      ejbModule = isEJbModule,
       size = size)
 
   }

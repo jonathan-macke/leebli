@@ -11,6 +11,7 @@ case class JarFile(classes: List[JavaClass] = Nil,
   containsWebService: Boolean = false,
   containsRESTService: Boolean = false,
   containsJPAEntities: Boolean = false,
+  ejbModule: Boolean =false, 
   id: Option[Long] = None) {
 
   def getAllContainedPackages = classes.map(_.packageName).distinct

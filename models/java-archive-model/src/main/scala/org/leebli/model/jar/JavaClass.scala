@@ -8,9 +8,14 @@ case class JavaClass(packageName: Option[String] = None,
   importedPackages: List[String] = Nil,
   size: Option[Long] = None,
   id: Option[Long] = None,
-  jarId: Option[Long] = None) {
+  jarId: Option[Long] = None,
+  annotations: List[Annotation] = Nil) {
 
   def getImportedPackageNames = this.importedPackages
 
   
+}
+
+case class Annotation(annotationType: String) {
+  override def toString() = annotationType
 }
