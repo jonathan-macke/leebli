@@ -84,7 +84,8 @@ object JarParser {
               isInterface = javaClass.isInterface,
               importedPackages = imports,
               annotations = annotations,
-              calls = analyser.calledMethods)
+              calls = analyser.calledMethods,
+              parents = analyser.parents)
 
           } else {
             javaClasses += JavaClass(name = n, size = Some(s))

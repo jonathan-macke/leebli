@@ -14,11 +14,13 @@ class ClassAnalyser extends EmptyVisitor {
   private var currentClass: JavaClass = _
   private var currentPool: ConstantPoolGen = _
   var calledMethods = Map.empty[String, Set[ClassMethod]].withDefaultValue(Set.empty)
+  var parents = List.empty[String]
 
   override def visitJavaClass(c: JavaClass) {
     currentClass = c
     currentPool = new ConstantPoolGen(c.getConstantPool)
     calledMethods = Map.empty[String, Set[ClassMethod]].withDefaultValue(Set.empty)
+    parents = (c.getInterfaceNames ++ Option(c.getSuperclassName)).toList
   }
 
   override def visitMethod(m: Method) {

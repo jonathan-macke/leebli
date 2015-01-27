@@ -10,7 +10,8 @@ case class JavaClass(packageName: Option[String] = None,
   id: Option[Long] = None,
   jarId: Option[Long] = None,
   annotations: List[Annotation] = Nil,
-  calls: Map[String, Set[ClassMethod]] = Map.empty) {
+  calls: Map[String, Set[ClassMethod]] = Map.empty,
+  parents: List[String] = Nil) {
 
   def getImportedPackageNames = this.importedPackages
 
@@ -26,5 +27,5 @@ case class Annotation(annotationType: String) {
 }
 
 case class ClassMethod(className: String, method: String) {
-  override def toString = s"$className.$method "
+  override def toString = s"$className.$method"
 }
